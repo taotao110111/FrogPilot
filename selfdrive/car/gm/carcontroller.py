@@ -60,9 +60,9 @@ class CarController:
     if not long_active: return 0.
     # Boltpilot pedal
     if accel > 0:
-      pedaloffset = interp(car_velocity, [0., 3, 6, 30], [0.08, 0.180, 0.22, 0.280])
+      pedaloffset = interp(car_velocity, [0., 3, 6, 30], [0.08, 0.175, 0.215, 0.265])
     else:
-      pedaloffset = interp(car_velocity, [0., 3, 6, 30], [0.10, 0.180, 0.22, 0.280])
+      pedaloffset = interp(car_velocity, [0., 3, 6, 30], [0.10, 0.175, 0.215, 0.265])
     pedal_gas = clip((pedaloffset + accel), 0.0, 1.0)
 
 
