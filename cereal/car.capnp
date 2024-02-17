@@ -116,18 +116,22 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     locationdPermanentError @118;
     paramsdTemporaryError @50;
     paramsdPermanentError @119;
-    openpilotCrashedRandomEvents @120;
+
+    # FrogPilot events
+    firefoxSteerSaturated @120;
     frogSteerSaturated @121;
     greenLight @122;
-    openpilotCrashed @123;
-    pedalInterceptorNoBrake @124;
-    torqueNNLoad @125;
-    turningLeft @126;
-    turningRight @127;
-    firefoxSteerSaturated @128;
-
-    # NDA Neokii
-    slowingDownSpeedSound @129;
+    laneChangeBlockedLoud @123;
+    leadDeparting @124;
+    noLaneAvailable @125;
+    openpilotCrashed @126;
+    openpilotCrashedRandomEvents @127;
+    pedalInterceptorNoBrake @128;
+    speedLimitChanged @129;
+    torqueNNLoad @130;
+    turningLeft @131;
+    turningRight @132;
+    vCruise69 @133;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
@@ -162,8 +166,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
 
 struct CarState {
   events @13 :List(CarEvent);
-
-  regenPressed @48 :Bool; #this is regen button only
 
   # CAN health
   canValid @26 :Bool;       # invalid counter/checksums
@@ -367,9 +369,6 @@ struct CarControl {
     accel @4: Float32; # m/s^2
     longControlState @5: LongControlState;
 
-    regenPaddle @9: Bool;
-    commaPedal @10: Float32;
-
     enum LongControlState @0xe40f3a917d908282{
       off @0;
       pid @1;
@@ -397,6 +396,7 @@ struct CarControl {
     leftLaneVisible @7: Bool;
     rightLaneDepart @8: Bool;
     leftLaneDepart @9: Bool;
+    leadVelocity @10: Float32;
 
     enum VisualAlert {
       # these are the choices from the Honda
@@ -425,10 +425,10 @@ struct CarControl {
       promptRepeat @7;
       promptDistracted @8;
 
+      # Random Events
       fart @9;
       firefox @10;
-
-      speedDown @11;
+      noice @11;
     }
   }
 

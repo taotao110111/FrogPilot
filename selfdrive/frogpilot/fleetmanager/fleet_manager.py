@@ -76,7 +76,7 @@ def footage():
 @app.route("/screenrecords/")
 @app.route("/screenrecords")
 def screenrecords():
-  rows = fleet.list_files(fleet.SCREENRECORD_PATH)
+  rows = fleet.list_file(fleet.SCREENRECORD_PATH)
   if not rows:
     return render_template("error.html", error="no screenrecords found at:<br><br>" + fleet.SCREENRECORD_PATH)
   return render_template("screenrecords.html", rows=rows, clip=rows[0])
@@ -105,7 +105,7 @@ def about():
 
 @app.route("/error_logs")
 def error_logs():
-  return render_template("error_logs.html", rows=fleet.list_files(fleet.ERROR_LOGS_PATH))
+  return render_template("error_logs.html", rows=fleet.list_file(fleet.ERROR_LOGS_PATH))
 
 
 @app.route("/error_logs/<file_name>")
@@ -116,6 +116,7 @@ def open_error_log(file_name):
 
 @app.route("/addr_input", methods=['GET', 'POST'])
 def addr_input():
+  preload = fleet.preload_favs()
   SearchInput = fleet.get_SearchInput()
   token = fleet.get_public_token()
   s_token = fleet.get_app_token()
@@ -139,11 +140,22 @@ def addr_input():
       return render_template("error.html")
   elif PrimeType != 0:
     return render_template("prime.html")
+  # amap stuff
+  elif SearchInput == 1:
+    amap_key, amap_key_2 = fleet.get_amap_key()
+    if amap_key == "" or amap_key is None or amap_key_2 == "" or amap_key_2 is None:
+      return redirect(url_for('amap_key_input'))
+    elif token == "" or token is None:
+      return redirect(url_for('public_token_input'))
+    elif s_token == "" or s_token is None:
+      return redirect(url_for('app_token_input'))
+    else:
+      return redirect(url_for('amap_addr_input'))
   elif fleet.get_nav_active():
     if SearchInput == 2:
-      return render_template("nonprime.html", gmap_key=gmap_key, lon=lon, lat=lat)
+      return render_template("nonprime.html", gmap_key=gmap_key, lon=lon, lat=lat, home=preload[0], work=preload[1], fav1=preload[2], fav2=preload[3], fav3=preload[4])
     else:
-      return render_template("nonprime.html", gmap_key=None, lon=None, lat=None)
+      return render_template("nonprime.html", gmap_key=None, lon=None, lat=None, home=preload[0], work=preload[1], fav1=preload[2], fav2=preload[3], fav3=preload[4])
   elif token == "" or token is None:
     return redirect(url_for('public_token_input'))
   elif s_token == "" or s_token is None:
@@ -153,9 +165,9 @@ def addr_input():
     if gmap_key == "" or gmap_key is None:
       return redirect(url_for('gmap_key_input'))
     else:
-      return render_template("addr.html", gmap_key=gmap_key, lon=lon, lat=lat)
+      return render_template("addr.html", gmap_key=gmap_key, lon=lon, lat=lat, home=preload[0], work=preload[1], fav1=preload[2], fav2=preload[3], fav3=preload[4])
   else:
-      return render_template("addr.html", gmap_key=None, lon=None, lat=None)
+      return render_template("addr.html", gmap_key=None, lon=None, lat=None, home=preload[0], work=preload[1], fav1=preload[2], fav2=preload[3], fav3=preload[4])
 
 @app.route("/nav_confirmation", methods=['GET', 'POST'])
 def nav_confirmation():
@@ -196,6 +208,26 @@ def gmap_key_input():
     return redirect(url_for('addr_input'))
   else:
     return render_template("gmap_key_input.html")
+
+@app.route("/amap_key_input", methods=['GET', 'POST'])
+def amap_key_input():
+  if request.method == 'POST':
+    postvars = request.form.to_dict()
+    fleet.amap_key_input(postvars)
+    return redirect(url_for('amap_addr_input'))
+  else:
+    return render_template("amap_key_input.html")
+
+@app.route("/amap_addr_input", methods=['GET', 'POST'])
+def amap_addr_input():
+  if request.method == 'POST':
+    postvars = request.form.to_dict()
+    fleet.nav_confirmed(postvars)
+    return redirect(url_for('amap_addr_input'))
+  else:
+    lon, lat = fleet.get_last_lon_lat()
+    amap_key, amap_key_2 = fleet.get_amap_key()
+    return render_template("amap_addr_input.html", lon=lon, lat=lat, amap_key=amap_key, amap_key_2=amap_key_2)
 
 @app.route("/CurrentStep.json", methods=['GET'])
 def find_CurrentStep():

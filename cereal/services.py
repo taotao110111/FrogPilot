@@ -80,7 +80,6 @@ services: dict[str, tuple] = {
   "qRoadEncodeIdx": (False, 20.),
   "userFlag": (True, 0., 1),
   "microphone": (True, 10., 10),
-  "naviData": (False, 0.),
 
   # FrogPilot
   "frogpilotCarControl": (True, 100., 10),
