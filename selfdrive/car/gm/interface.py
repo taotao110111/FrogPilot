@@ -126,9 +126,9 @@ class CarInterface(CarInterfaceBase):
       ret.minSteerSpeed = 10 * CV.KPH_TO_MS
 
       # Tuning for experimental long
-      ret.longitudinalTuning.kpV = [2.0, 1.5]
-      ret.longitudinalTuning.kiV = [0.72]
-      ret.stoppingDecelRate = 2.0  # reach brake quickly after enabling
+      ret.longitudinalTuning.kpV = [0.1500, 0.1500]
+      ret.longitudinalTuning.kiV = [0.1]
+      ret.stoppingDecelRate = 0.8  # reach brake quickly after enabling
       ret.vEgoStopping = 0.25
       ret.vEgoStarting = 0.25
 
@@ -311,6 +311,15 @@ class CarInterface(CarInterfaceBase):
       ret.steerActuatorDelay = 0.2
       CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
 
+    elif candidate == CAR.TRAX:
+      ret.mass = 1365.
+      ret.wheelbase = 2.7
+      ret.steerRatio = 16.4
+      ret.centerToFront = ret.wheelbase * 0.4
+      ret.tireStiffnessFactor = 1.0
+      ret.steerActuatorDelay = 0.2
+      CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
+
     elif candidate in (CAR.SUBURBAN, CAR.SUBURBAN_CC):
       ret.mass = 2731.
       ret.wheelbase = 3.302
@@ -358,7 +367,7 @@ class CarInterface(CarInterfaceBase):
         ret.safetyConfigs[0].safetyParam |= Panda.FLAG_GM_PEDAL_LONG
         # Note: Low speed, stop and go not tested. Should be fairly smooth on highway
         ret.longitudinalTuning.kpBP = [5., 35.]
-        ret.longitudinalTuning.kpV = [0.35, 0.5]
+        ret.longitudinalTuning.kpV = [0.1500, 0.2000]
         ret.longitudinalTuning.kiBP = [0., 35.0]
         ret.longitudinalTuning.kiV = [0.1, 0.1]
         ret.longitudinalTuning.kf = 0.15
@@ -403,7 +412,7 @@ class CarInterface(CarInterfaceBase):
     return ret
 
   # returns a car.CarState
-  def _update(self, c, conditional_experimental_mode, frogpilot_variables):
+  def _update(self, c, conditional_experimental_mode, frogpilot_variables): # pylint: disable=arguments-differ
     ret = self.CS.update(self.cp, self.cp_cam, self.cp_loopback, conditional_experimental_mode, frogpilot_variables)
 
     # Don't add event if transitioning from INIT, unless it's to an actual button
@@ -454,5 +463,5 @@ class CarInterface(CarInterfaceBase):
 
     return ret
 
-  def apply(self, c, now_nanos, frogpilot_variables):
+  def apply(self, c, now_nanos, frogpilot_variables): # pylint: disable=arguments-differ
     return self.CC.update(c, self.CS, now_nanos, frogpilot_variables)

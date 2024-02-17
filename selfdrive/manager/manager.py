@@ -49,6 +49,8 @@ def manager_init() -> None:
     ("LanguageSetting", "main_en"),
     ("OpenpilotEnabledToggle", "1"),
     ("LongitudinalPersonality", str(log.LongitudinalPersonality.standard)),
+    ("AutoNaviSpeedCtrlStart", "25"),
+    ("AutoNaviSpeedCtrlEnd", "15"),
 
     # Default FrogPilot parameters
     ("AccelerationPath", "1"),

@@ -11,6 +11,7 @@
 #include "selfdrive/ui/qt/widgets/cameraview.h"
 
 #include "selfdrive/frogpilot/screenrecorder/screenrecorder.h"
+#include <QTimer>
 
 const int btn_size = 192;
 const int img_size = (btn_size / 4) * 3;
@@ -231,6 +232,15 @@ private:
   inline QColor greenColor(int alpha = 242) { return QColor(23, 134, 68, alpha); }
 
 protected:
+  // NDA neokii
+  QPixmap ic_nda;
+  QPixmap ic_hda;
+  QPixmap ic_nda2;
+  QPixmap ic_hda2;
+  QPixmap ic_regenPaddle;
+  void drawRoadLimitSpeed(QPainter &p);
+  void drawBrakeRegen(QPainter &p);
+  
   void paintGL() override;
   void initializeGL() override;
   void showEvent(QShowEvent *event) override;
@@ -246,6 +256,13 @@ protected:
 
   double prev_draw_t = 0;
   FirstOrderFilter fps_filter;
+
+  
+  const int radius = 192;
+  const int img_size = (radius / 2) * 1.5;
+
+  uint64_t last_update_params;
+  
 };
 
 // container for all onroad widgets
